@@ -5,6 +5,17 @@ const router = Router();
 const User = require("../models/user");
 
 const { createTokenForUser } = require("../services/authentication");
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
+function sendAuthSuccess(req, res, token, message) {
+  const response = res.cookie("token", token);
+
+  if (req.get("Sec-Fetch-Mode") === "navigate") {
+    return response.redirect(`${FRONTEND_URL}/`);
+  }
+
+  return response.json({ message });
+}
 
 router.post("/signup", async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -15,20 +26,17 @@ router.post("/signup", async (req, res) => {
     password,
   });
   const token = createTokenForUser(user);
-  return res
-    .cookie("token", token)
-    .status(201)
-    .redirect("http://localhost:5173/");
+  return sendAuthSuccess(req, res.status(201), token, "Account created successfully");
 });
 
 router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
   try {
     const token = await User.matchPassWordAndGenerateToken(email, password);
-    res.cookie("token", token).redirect("http://localhost:5173/");
+    return sendAuthSuccess(req, res, token, "Signed in successfully");
   } catch (error) {
     console.log(error);
-    res.json({ message: "error" });
+    res.status(401).json({ message: error.message });
   }
 });
 

@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Navbar() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   async function handleLogout() {
-    await fetch("http://localhost:8000/user/logout", {
+    await fetch(`${API_URL}/user/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -17,20 +19,24 @@ function Navbar() {
   }
 
   return (
-    <nav>
-      <Link to="/">Todo App</Link>
+    <nav className="site-header">
+      <Link className="brand" to="/">
+        <span className="brand-mark">n</span>
+        noteform
+      </Link>
 
       {user ? (
-        <div>
-          <span>Hi, {user.fullName}</span>
+        <div className="header-user">
+          <span>{user.fullName}</span>
+          <span className="avatar">{user.fullName?.charAt(0).toUpperCase()}</span>
 
-          <button onClick={handleLogout}>Logout</button>
+          <button className="text-button" onClick={handleLogout}>Log out</button>
         </div>
       ) : (
-        <div>
-          <Link to="/signin">Sign In</Link>
+        <div className="header-actions">
+          <Link className="header-link" to="/signin">Sign in</Link>
 
-          <Link to="/signup">Sign Up</Link>
+          <Link className="primary-link" to="/signup">Get started</Link>
         </div>
       )}
     </nav>
