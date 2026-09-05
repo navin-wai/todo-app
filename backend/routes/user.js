@@ -6,9 +6,14 @@ const User = require("../models/user");
 
 const { createTokenForUser } = require("../services/authentication");
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+};
 
 function sendAuthSuccess(req, res, token, message) {
-  const response = res.cookie("token", token);
+  const response = res.cookie("token", token, cookieOptions);
 
   if (req.get("Sec-Fetch-Mode") === "navigate") {
     return response.redirect(`${FRONTEND_URL}/`);
@@ -41,7 +46,7 @@ router.post("/signin", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("token").redirect("/");
+  res.clearCookie("token", cookieOptions).redirect("/");
 });
 
 module.exports = router;
