@@ -22,21 +22,29 @@ function Navbar() {
     <nav className="site-header">
       <Link className="brand" to="/">
         <span className="brand-mark">n</span>
-        noteform
+        todoform
       </Link>
 
       {user ? (
         <div className="header-user">
           <span>{user.fullName}</span>
-          <span className="avatar">{user.fullName?.charAt(0).toUpperCase()}</span>
+          <span className="avatar">
+            {user.fullName?.charAt(0).toUpperCase()}
+          </span>
 
-          <button className="text-button" onClick={handleLogout}>Log out</button>
+          <button className="text-button" onClick={handleLogout}>
+            Log out
+          </button>
         </div>
       ) : (
         <div className="header-actions">
-          <Link className="header-link" to="/signin">Sign in</Link>
+          <Link className="header-link" to="/signin">
+            Sign in
+          </Link>
 
-          <Link className="primary-link" to="/signup">Get started</Link>
+          <Link className="primary-link" to="/signup">
+            Get started
+          </Link>
         </div>
       )}
     </nav>

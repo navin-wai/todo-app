@@ -6,7 +6,11 @@ function Home() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <main className="landing"><p>Loading your workspace...</p></main>;
+    return (
+      <main className="landing">
+        <p>Loading your workspace...</p>
+      </main>
+    );
   }
 
   if (!user) {
@@ -17,8 +21,13 @@ function Home() {
           <div className="landing-content">
             <span className="eyebrow">A quieter place to think</span>
             <h1>Make room for the ideas that matter.</h1>
-            <p>Capture your daily notes, keep small promises to yourself, and move through your work with intention.</p>
-            <Link className="primary-link" to="/signup">Create your workspace</Link>
+            <p>
+              Capture your daily todos, keep small promises to yourself, and
+              move through your work with intention.
+            </p>
+            <Link className="primary-link" to="/signup">
+              Create your workspace
+            </Link>
           </div>
         </main>
       </div>
@@ -32,9 +41,17 @@ function Home() {
         <div className="workspace-heading">
           <div>
             <span className="eyebrow">Your personal workspace</span>
-            <h1 className="page-title">Good to see you, {user.fullName.split(" ")[0]}.</h1>
+            <h1 className="page-title">
+              Good to see you, {user.fullName.split(" ")[0]}.
+            </h1>
           </div>
-          <span className="date-label">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span>
+          <span className="date-label">
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "short",
+              day: "numeric",
+            })}
+          </span>
         </div>
         <ToDo />
       </main>

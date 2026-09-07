@@ -80,10 +80,11 @@ function Todo() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Could not update note");
+      if (!response.ok)
+        throw new Error(data.message || "Could not update todo");
 
       setTodos((currentTodos) =>
-        currentTodos.map((item) => item._id === data._id ? data : item),
+        currentTodos.map((item) => (item._id === data._id ? data : item)),
       );
     } catch (error) {
       setError(error.message);
@@ -99,10 +100,12 @@ function Todo() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Could not delete note");
+        throw new Error(data.message || "Could not delete todo");
       }
 
-      setTodos((currentTodos) => currentTodos.filter((todo) => todo._id !== id));
+      setTodos((currentTodos) =>
+        currentTodos.filter((todo) => todo._id !== id),
+      );
     } catch (error) {
       setError(error.message);
     }
@@ -112,8 +115,13 @@ function Todo() {
   const activeCount = todos.length - completedCount;
   const visibleTodos = todos
     .filter((todo) => {
-      const matchesFilter = filter === "all" || (filter === "active" && !todo.completed) || (filter === "completed" && todo.completed);
-      return matchesFilter && todo.title.toLowerCase().includes(search.toLowerCase());
+      const matchesFilter =
+        filter === "all" ||
+        (filter === "active" && !todo.completed) ||
+        (filter === "completed" && todo.completed);
+      return (
+        matchesFilter && todo.title.toLowerCase().includes(search.toLowerCase())
+      );
     })
     .sort((first, second) => {
       if (sort === "priority") {
@@ -132,13 +140,29 @@ function Todo() {
       <aside className="sidebar">
         <div className="stat-card">
           <div className="stat-label">Completion rate</div>
-          <div className="stat-value">{todos.length ? Math.round((completedCount / todos.length) * 100) : 0}%</div>
-          <div className="stat-label">{completedCount} of {todos.length} notes done</div>
+          <div className="stat-value">
+            {todos.length
+              ? Math.round((completedCount / todos.length) * 100)
+              : 0}
+            %
+          </div>
+          <div className="stat-label">
+            {completedCount} of {todos.length} todos done
+          </div>
         </div>
         <div className="filter-list">
-          {[['all', 'All notes', todos.length], ['active', 'In progress', activeCount], ['completed', 'Completed', completedCount]].map(([value, label, count]) => (
-            <button className={`filter-button ${filter === value ? "active" : ""}`} key={value} onClick={() => setFilter(value)}>
-              {label}<span className="filter-count">{count}</span>
+          {[
+            ["all", "All todos", todos.length],
+            ["active", "In progress", activeCount],
+            ["completed", "Completed", completedCount],
+          ].map(([value, label, count]) => (
+            <button
+              className={`filter-button ${filter === value ? "active" : ""}`}
+              key={value}
+              onClick={() => setFilter(value)}
+            >
+              {label}
+              <span className="filter-count">{count}</span>
             </button>
           ))}
         </div>
@@ -146,8 +170,18 @@ function Todo() {
 
       <div className="notes-panel">
         <div className="notes-toolbar">
-          <input className="search-box" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search your notes..." />
-          <select className="sort-select" value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Sort notes">
+          <input
+            className="search-box"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search your todos..."
+          />
+          <select
+            className="sort-select"
+            value={sort}
+            onChange={(event) => setSort(event.target.value)}
+            aria-label="Sort todos"
+          >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
             <option value="priority">By priority</option>
@@ -155,46 +189,78 @@ function Todo() {
         </div>
 
         <form className="note-form" onSubmit={addTodo}>
-        <input
-          className="note-input"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Capture a thought or next step..."
-        />
+          <input
+            className="note-input"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Capture a thought or next step..."
+          />
 
-        <select
-          className="priority-select"
-          value={priority}
-          onChange={(event) => setPriority(event.target.value)}
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
+          <select
+            className="priority-select"
+            value={priority}
+            onChange={(event) => setPriority(event.target.value)}
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
 
-        <button className="primary-button" type="submit">Add note</button>
+          <button className="primary-button" type="submit">
+            Add todo
+          </button>
         </form>
 
         {error && <p className="error-message">{error}</p>}
 
         <div className="notes-list">
-          {visibleTodos.length ? visibleTodos.map((todo) => (
-            <article className="note-card" key={todo._id}>
-              <button className={`check-button ${todo.completed ? "checked" : ""}`} onClick={() => toggleTodo(todo)} aria-label={todo.completed ? "Mark note active" : "Mark note complete"}>
-                {todo.completed ? "✓" : ""}
-              </button>
+          {visibleTodos.length ? (
+            visibleTodos.map((todo) => (
+              <article className="note-card" key={todo._id}>
+                <button
+                  className={`check-button ${todo.completed ? "checked" : ""}`}
+                  onClick={() => toggleTodo(todo)}
+                  aria-label={
+                    todo.completed ? "Mark todo active" : "Mark todo complete"
+                  }
+                >
+                  {todo.completed ? "✓" : ""}
+                </button>
 
-              <div className="note-content">
-                <div className={`note-title ${todo.completed ? "completed" : ""}`}>{todo.title}</div>
-                <div className="note-meta">
-                  <span className={`priority-${todo.priority}`}>{todo.priority}</span>
-                  <span>{new Date(todo.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                <div className="note-content">
+                  <div
+                    className={`note-title ${todo.completed ? "completed" : ""}`}
+                  >
+                    {todo.title}
+                  </div>
+                  <div className="note-meta">
+                    <span className={`priority-${todo.priority}`}>
+                      {todo.priority}
+                    </span>
+                    <span>
+                      {new Date(todo.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <button className="delete-button" onClick={() => deleteTodo(todo._id)}>Remove</button>
-            </article>
-          )) : <div className="empty-state">{search ? "No notes match your search." : "Your page is clear. Add the first note above."}</div>}
+                <button
+                  className="delete-button"
+                  onClick={() => deleteTodo(todo._id)}
+                >
+                  Remove
+                </button>
+              </article>
+            ))
+          ) : (
+            <div className="empty-state">
+              {search
+                ? "No todos match your search."
+                : "Your page is clear. Add the first todo above."}
+            </div>
+          )}
         </div>
       </div>
     </section>
